@@ -3,101 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow Dashboard</title>
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+   
 </head>
 <body>
+ 
+<nav>
+  <div class="logo">Task<span>Flow Dashboard</span></div>
 
-<header class="navbar">
-    <div class="controls">
-        <h1>TaskFlow <em>Dashboard</em></h1>
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search tasks..."
-        >
+  <div class="search-wrap">
+    <svg width="14" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      
+    </svg>
+    <input type="text" id="searchInput" placeholder="Search tasks…" >
+  </div>
 
-        <select id="categoryFilter">
-            <option value="all">All Priorities</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-        </select>
+  <select id="categoryFilter">
+    <option value="">All Categories</option>
+    <option value="design">Design</option>
+    <option value="dev">Dev</option>
+    <option value="research">Research</option>
+    <option value="ops">Ops</option>
+    <option value="other">Other</option>
+  </select>
 
-        <button id="themeToggle">🌙 Theme</button>
-        <button id="openModal">+ New Task</button>
+  <div class="nav-right">
+    <label class="theme-toggle" id="themeToggle" title="Toggle theme">
+      <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      <span class="toggle-label" id="themeLabel">LIGHT</span>
+    </label>
+  </div>
+</nav>
+
+
+<main>
+
+  
+  <section class="analytics">
+    <div class="stat-card todo">
+      <span class="stat-label">To Do</span>
+      <span class="stat-value" id="countTodoVal">0</span>
     </div>
-</header>
+    <div class="stat-card inprog">
+      <span class="stat-label">In Progress</span>
+      <span class="stat-value" id="InprogCountVal">0</span>
+    </div>
+    <div class="stat-card done">
+      <span class="stat-label">Done</span>
+      <span class="stat-value" id="DoneCountVal">0</span>
+    </div>
+    <div class="stat-card" style="flex:2;min-width:200px;">
+      <span class="stat-label">Completion</span>
+      <span class="stat-value" id="doneCountVal">0%</span>
+       <div class="progress-bar-wrap">
+        <span class="progress-bar">Task Progress</span>
+        <span class="stat-value" id="progressPctVal">0%</span>
+      </div>
+    </div>
+  </section>
 
-<main class="board-wrapper">
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <button class="btn-primary" id="newTaskBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      New Task
+    </button>
+  </div>
 
-    <section class="column">
-        <h2>To Do</h2>
-        <div class="task-list" id="todo"></div>
-    </section>
+  <!-- BOARD -->
+  <div class="board-wrapper" id="boardWrapper">
 
-    <section class="column">
-        <h2>In Progress</h2>
-        <div class="task-list" id="progress"></div>
-    </section>
+    <div class="column" data-col="todo">
+      <div class="col-header">
+        <span class="col-dot"></span>
+        <span class="col-title">To Do</span>
+        <span class="col-count" id="badgeTodo">0</span>
+      </div>
+      <div class="task-list" id="listTodo">
+        <div class="dashed-box">No tasks added yet</div>
+      </div>
+    </div>
 
-    <section class="column">
-        <h2>Done</h2>
-        <div class="task-list" id="done"></div>
-    </section>
+    <div class="column" data-col="inprogress">
+      <div class="col-header">
+        <span class="dot progress-"></span>
+        <span class="col-title">In Progress</span>
+        <span class="col-count" id="badgeInprog">0</span>
+      </div>
+      <div class="task-list" id="listInprogress"></div>
+    </div>
 
+    <div class="column" data-col="done">
+      <div class="col-header">
+        <span class="col-dot"></span>
+        <span class="col-title">Done</span>
+        <span class="col-count" id="badgeDone">0</span>
+      </div>
+      <div class="task-list" id="listDone"></div>
+    </div>
+
+  </div>
 </main>
 
-<section class="analytics">
-    <h2>Productivity Analytics</h2>
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-title" id="modalTitle">New Task</div>
 
-    <div class="stats">
-        <div class="stat-card">
-            <h3>Total Tasks</h3>
-            <p id="totalTasks">0</p>
-        </div>
-
-        <div class="stat-card">
-            <h3>Completed Tasks</h3>
-            <p id="completedTasks">0</p>
-        </div>
-    </div>
-</section>
-
-<div class="modal hidden" id="taskModal">
-
-    <div class="modal-content">
-
-        <h2>Create New Task</h2>
-
-        <form id="taskForm">
-
-            <input
-                type="text"
-                id="taskTitle"
-                placeholder="Task Title"
-                required
-            >
-
-            <select id="taskPriority">
-                <option value="high">High Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="low">Low Priority</option>
-            </select>
-
-            <div class="modal-buttons">
-                <button type="submit">Add Task</button>
-                <button type="button" id="closeModal">
-                    Cancel
-                </button>
-            </div>
-
-        </form>
-
+    <div class="form-group">
+      <label for="taskTitle">Title</label>
+      <input type="text" id="taskTitle" placeholder="What needs to be done?" maxlength="120">
     </div>
 
-</div>
+    <div class="form-group">
+      <label for="taskDesc">Description (optional)</label>
+      <textarea id="taskDesc" rows="2" placeholder="Add details…"></textarea>
+    </div>
 
-<script src="script.js"></script>
-</body>
+    <div style="display:flex;gap:0.75rem;">
+      <div class="form-group" style="flex:1">
+        <label for="taskPriority">Priority</label>
+        <select id="taskPriority">
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label for="taskCategory">Category</label>
+        <select id="taskCategory">
+          <option value="design">Design</option>
+          <option value="dev">Dev</option>
+          <option value="research">Research</option>
+          <option value="ops">Ops</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn-primary" id="saveTaskBtn">Add Task</button>
+    </div>
+  </div>
+</div>   
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+let tasks = [];   // [{ id, title, desc, priority, category, col, createdAt }]
+let idCounter = 1;
+
+// ── STORAGE ────────────────────────────────────────────────────────────────
+function saveState() {
+  localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
+  localStorage.setItem('taskflow_counter', String(idCounter));
+  localStorage.setItem('taskflow_theme', document.documentElement.getAttribute('data-theme'));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('taskflow_tasks');
+  const counter = localStorage.getItem('taskflow_counter');
+  const theme = localStorage.getItem('taskflow_theme');
+  if (saved) tasks = JSON.parse(saved);
+  if (counter) idCounter = parseInt(counter, 10);
+  if (theme) applyTheme(theme);
+}
+
+// ── THEME ──────────────────────────────────────────────────────────────────
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeLabel').textContent = theme.toUpperCase();
+}
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'light' ? 'dark' : 'light');
+  saveState();
+});
+
+// ── MODAL ──────────────────────────────────────────────────────────────────
+const overlay = document.getElementById('modalOverlay');
+
+function openModal() {
+  overlay.classList.add('open');
+  document.getElementById('taskTitle').focus();
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.getElementById('taskTitle').value = '';
+  document.getElementById('taskDesc').value = '';
+  document.getElementById('taskPriority').value = 'medium';
+  document.getElementById('taskCategory').value = 'design';
+}
+
+document.getElementById('newTaskBtn').addEventListener('click', openModal);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('saveTaskBtn').addEventListener('click', addModal);
+
+function addModal() {
+  const title = document.getElementById('taskTitle').value.trim();
+  if (!title) { document.getElementById('taskTitle').focus(); return; }
+
+  const task = {
+    id: idCounter++,
+    title,
+    desc: document.getElementById('taskDesc').value.trim(),
+    priority: document.getElementById('taskPriority').value,
+    category: document.getElementById('taskCategory').value,
+    col: 'todo',
+    createdAt: Date.now()
+  };
+
+  tasks.push(task);
+  renderCard(task);
+  updateAnalytics();
+  saveState();
+  closeModal();
+};
+
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closeModal();
+});
+
+document.getElementById('saveTaskBtn').addEventListener('click', e => {
+  e.preventDefault();
+  const title = document.getElementById('taskTitle').value.trim();
+  if (!title) { document.getElementById('taskTitle').focus(); return; }
+
+  const task = {
+    id: idCounter++,
+    title,
+    desc: document.getElementById('taskDesc').value.trim(),
+    priority: document.getElementById('taskPriority').value,
+    category: document.getElementById('taskCategory').value,
+    col: 'todo',
+    createdAt: Date.now()
+  };
+
+  tasks.push(task);
+  renderCard(task);
+  updateAnalytics();
+  saveState();
+  closeModal();
+  addModal();
+});
+
+// ── RENDER CARD ────────────────────────────────────────────────────────────
+function renderCard(task) {
+  const list = document.getElementById('listTodo');
+  if (task.col === 'inprogress') return appendCard(task, document.getElementById('listInprogress'));
+    if (task.col === 'done') return appendCard(task, document.getElementById('listDone'));
+}
+  </script>
+  </body>
 </html>
